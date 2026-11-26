@@ -121,7 +121,7 @@
   const heroSlides = () => [{ src: S.hero.photo, alt: S.hero.alt }].concat((S.hero.more || []).filter((h) => h && h.src)).filter((h) => h.src);
   // постер: фото на весь экран, крупный заголовок, строки переносятся по запятым (Вариант 1, выбран Айгуль 24.11)
   H.hero = () => S.hero.style === "poster" ? `<section class="hero hero--poster">
-      <div class="hp__ph"><img src="${R}${S.hero.photo}-1600.webp" srcset="${R}${S.hero.photo}-640.webp 640w, ${R}${S.hero.photo}-1280.webp 1280w, ${R}${S.hero.photo}-1600.webp 1600w" sizes="100vw" alt="${esc(S.hero.alt)}" fetchpriority="high"></div>
+      <div class="hp__ph">${heroSlides().slice(0, 3).map((h, i) => `<img class="hp__s${i ? "" : " is-on"}" ${i ? "loading=\"lazy\" " : ""}src="${R}${h.src}-1600.webp" srcset="${R}${h.src}-640.webp 640w, ${R}${h.src}-1280.webp 1280w, ${R}${h.src}-1600.webp 1600w" sizes="100vw" alt="${esc(h.alt || S.hero.alt)}"${i ? "" : ' fetchpriority="high"'}>`).join("")}</div>
       <div class="wrap hp__t"><h1 class="hp__h">${esc(S.hero.title).replace(/,\s*/g, ",<br>")}</h1><p class="hp__sub">${esc(S.hero.short)}</p>
         <div class="hero__row"><a class="btn btn--accent" href="${R}courses/">Посмотреть курсы</a><button class="link" data-quiz>${arrow("Подобрать за 3 вопроса")}</button></div>
         <p class="hp__cnt"><b>${S.courses.length}</b> ${plural(S.courses.length, "курс", "курса", "курсов")} в ${S.categories.length} ${plural(S.categories.length, "направлении", "направлениях", "направлениях")}</p></div>
@@ -536,6 +536,8 @@
   const rvs = [...document.querySelectorAll(".ph.rv, .rv-t:not(.rv-w)")];
   if (rvs.length) { let rq = 0; const noMo = matchMedia("(prefers-reduced-motion: reduce)").matches; const rv = () => { rq = 0; const vh = innerHeight; for (const el of rvs) { const t = el.getBoundingClientRect().top; const p = Math.min(1, Math.max(0, (vh - t) / (vh * 0.45))); el.style.setProperty("--rv", noMo ? 1 : p.toFixed(3)); } };
     addEventListener("scroll", () => { if (!rq) rq = requestAnimationFrame(rv); }, { passive: true }); addEventListener("resize", rv); rv(); }
+  const hs = document.querySelectorAll(".hp__s");
+  if (hs.length > 1 && !matchMedia("(prefers-reduced-motion: reduce)").matches) { let hi = 0; setInterval(() => { if (document.hidden) return; hs[hi].classList.remove("is-on"); hi = (hi + 1) % hs.length; hs[hi].classList.add("is-on"); }, 5000); }
   document.querySelectorAll("[data-more]").forEach((b) => b.addEventListener("click", () => { document.getElementById(b.dataset.more).classList.remove("is-cut"); b.remove(); }));
   document.querySelectorAll("[data-cmp-box]").forEach((box) => { const up = () => { const v = (k) => course(box.querySelector(`[data-cmp="${k}"]`).value); box.querySelector("[data-cmp-cols]").innerHTML = cmpCol(v("a")) + cmpCol(v("b")); }; box.addEventListener("change", up); });
 
