@@ -114,10 +114,6 @@ window.SITE = {
       {
         "src": "ph/up-mwxoklvt",
         "alt": ""
-      },
-      {
-        "src": "ph/up-mwxoluca",
-        "alt": ""
       }
     ],
     "style": "poster"
