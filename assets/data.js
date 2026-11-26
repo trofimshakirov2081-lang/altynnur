@@ -95,6 +95,7 @@ window.SITE = {
     }
   ],
   "home": [
+    "b:mwxqac4l",
     "hero",
     "directions",
     "featured",
@@ -102,8 +103,7 @@ window.SITE = {
     "zoom",
     "gallery",
     "teacher",
-    "notify",
-    "b:mwxqac4l"
+    "notify"
   ],
   "hero": {
     "title": "Ресницы, брови, ногти",
@@ -111,12 +111,7 @@ window.SITE = {
     "short": "Учебный центр бьюти-профессий в Туймазах. Практика на моделях с первого дня, рядом с преподавателем.",
     "photo": "ph/r-lash-brown",
     "alt": "Наращенные ресницы крупным планом",
-    "more": [
-      {
-        "src": "ph/up-mwxoklvt",
-        "alt": ""
-      }
-    ],
+    "more": [],
     "style": "poster"
   },
   "zoom": {
@@ -1380,5 +1375,18 @@ window.SITE = {
     "text": "Так выглядит работа вблизи: каждая ресница видна."
   },
   "moreAfter": "6",
-  "mode": "static"
+  "mode": "static",
+  "homeOff": [
+    "scrub",
+    "compare",
+    "calc",
+    "referral",
+    "promo",
+    "batches",
+    "numbers",
+    "reviews",
+    "cert",
+    "manifest",
+    "ribbon"
+  ]
 };
