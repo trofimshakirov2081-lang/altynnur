@@ -955,3 +955,6 @@ html.menu-open .burger span{background:transparent!important}
 .hp__ph .hp__s.is-on{opacity:1}
 @media (max-width:899px){.hp__ph .hp__s{height:114%;top:-14%}}
 @media (max-width:899px) and (max-height:780px){.hp__ph .hp__s{height:126%;top:-26%}}
+
+/* заголовок первого экрана: цвет акцента из палитры, если он виден на фото */
+.hero--poster .hp__h{color:var(--hero-h,#D9B26A)}

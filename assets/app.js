@@ -53,8 +53,19 @@
     if (D.style) document.documentElement.dataset.style = D.style;
     const FB = { ysabeau: "'Ysabeau Office'", arsenal: "'Arsenal'", finlandica: "'Finlandica'" }[D.fontBody]; if (FB) st.setProperty("--f-body", FB + ",system-ui,sans-serif");
     document.documentElement.dataset.shadow = D.shadow || "soft"; })();
+  // своя палитра из админки: фон, текст, акцент; остальные оттенки считаются сами под светлый или тёмный фон
+  const PAL = (() => { const P = (S.design || {}).palette; if (!P || !/^#[0-9a-f]{6}$/i.test(P.bg || "") || !/^#[0-9a-f]{6}$/i.test(P.text || "") || !/^#[0-9a-f]{6}$/i.test(P.accent || "")) return null;
+    const lum = (h) => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4))); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+    const dark = lum(P.bg) < 0.25, mix = (a, b, k) => `color-mix(in srgb, ${a} ${k}%, ${b})`, st = document.documentElement.style, set = (k, v) => st.setProperty(k, v);
+    set("--ivory", P.bg); set("--parchment", mix(P.bg, P.text, dark ? 92 : 95)); set("--sand", mix(P.bg, P.text, 70)); set("--taupe", mix(P.bg, P.text, 55));
+    set("--ink", P.text); set("--ink-2", mix(P.text, P.bg, 62)); set("--line", mix(P.text, "transparent", 14)); set("--line-strong", mix(P.text, "transparent", 32));
+    set("--espresso", dark ? mix(P.bg, "#000", 80) : mix(P.text, P.bg, 92)); set("--espresso-2", dark ? mix(P.bg, P.text, 90) : mix(P.text, P.bg, 84));
+    set("--on-dark", dark ? P.text : P.bg); set("--on-dark-2", dark ? mix(P.text, P.bg, 62) : mix(P.bg, P.text, 70)); set("--line-dark", mix(dark ? P.text : P.bg, "transparent", 15));
+    set("--accent", P.accent); set("--accent-hover", mix(P.accent, dark ? "#fff" : "#000", 86)); set("--accent-text", P.accent); set("--on-accent", lum(P.accent) > 0.35 ? "#15100D" : "#FFFFFF"); set("--hero-h", lum(P.accent) > 0.2 ? P.accent : "#F4EADB");
+    return { dark }; })();
   let MODE = new URLSearchParams(location.search).get("mode"); try { MODE = MODE || localStorage.getItem("altyn-mode"); } catch (e) {} MODE = S.modeToggle === false ? "light" : MODE === "dark" ? "dark" : "light";
   document.documentElement.dataset.mode = MODE;
+  if (PAL) { THEME = PAL.dark ? "night" : "gold"; document.documentElement.dataset.theme = THEME; }
   const apply = (key, id) => { document.documentElement.dataset[key] = id; try { localStorage.setItem("altyn-" + key, id); } catch (e) {} document.querySelectorAll(`[data-${key}-set]`).forEach((b) => b.setAttribute("aria-pressed", b.getAttribute(`data-${key}-set`) === id)); };
   document.documentElement.dataset.theme = THEME; document.documentElement.dataset.font = FONT;
 
