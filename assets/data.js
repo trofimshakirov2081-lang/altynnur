@@ -99,6 +99,8 @@ window.SITE = {
     "hero",
     "directions",
     "featured",
+    "compare",
+    "calc",
     "enroll",
     "zoom",
     "gallery",
