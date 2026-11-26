@@ -98,21 +98,25 @@ window.SITE = {
     "hero",
     "directions",
     "featured",
-    "compare",
-    "calc",
     "enroll",
     "zoom",
     "gallery",
     "teacher",
-    "notify"
+    "notify",
+    "b:mwxqac4l"
   ],
   "hero": {
     "title": "Ресницы, брови, ногти",
     "text": "Практическое обучение с преподавателем, который помогает разобраться в профессии и получить первые профессиональные навыки.",
-    "short": "Учебный центр бьюти-профессий в Туймазах. Практика на моделях с первого дня, рядом с преподавателем",
+    "short": "Учебный центр бьюти-профессий в Туймазах. Практика на моделях с первого дня, рядом с преподавателем.",
     "photo": "ph/r-lash-brown",
     "alt": "Наращенные ресницы крупным планом",
-    "more": [],
+    "more": [
+      {
+        "src": "ph/up-mwxoklvt",
+        "alt": ""
+      }
+    ],
     "style": "poster"
   },
   "zoom": {
@@ -1118,7 +1122,25 @@ window.SITE = {
     "fontBody": "",
     "style": "studio"
   },
-  "blocks": [],
+  "blocks": [
+    {
+      "id": "mwxqac4l",
+      "type": "text",
+      "on": true,
+      "title": "Оуиуг",
+      "text": "Утуиугутуиу",
+      "align": "center",
+      "bg": "accent",
+      "photos": [],
+      "size": "m",
+      "side": "right",
+      "btn": "",
+      "act": "link",
+      "url": "https://ru.wikipedia.org/wiki/RRR:_%D0%A0%D1%8F%D0%B4%D0%BE%D0%BC_%D1%80%D0%B5%D0%B2%D1%91%D1%82_%D1%80%D0%B5%D0%B2%D0%BE%D0%BB%D1%8E%D1%86%D0%B8%D1%8F",
+      "waText": "",
+      "course": ""
+    }
+  ],
   "works": [
     {
       "src": "ph/a-6657",
