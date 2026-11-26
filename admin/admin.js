@@ -56,13 +56,24 @@
     const slugs = new Set(S.courses.map((x) => x.slug));
     S.featured = (S.featured || []).filter((s) => slugs.has(s));
   }
+  // Слияние изменений: base = версия сайта, с которой начали править; mine = наш черновик; theirs = то, что на сайте сейчас.
+  // Что поменяли мы, берём наше; что поменяли на сайте без нас (другой человек, Трофим), сохраняем.
+  let BASE = null;
+  const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  const isObj = (x) => x && typeof x === "object" && !Array.isArray(x);
+  function merge3(base, mine, theirs) {
+    if (eq(mine, base)) return theirs; if (eq(theirs, base) || eq(theirs, mine)) return mine;
+    if (isObj(mine) && isObj(theirs)) { const out = {}, b = isObj(base) ? base : {};
+      new Set([...Object.keys(mine), ...Object.keys(theirs)]).forEach((k) => { if (!(k in mine) && k in b) return; if (!(k in theirs) && k in b && eq(mine[k], b[k])) return; const v = merge3(b[k], mine[k], theirs[k]); if (v !== undefined) out[k] = v; });
+      return out; }
+    return mine; }
   function touch() { dirty = true; unpublished = true; paintState(); clearTimeout(saveT); saveT = setTimeout(saveDraft, 1500); }
   async function saveDraft() {
     if (!dirty || saving) return;
     saving = true; clearTimeout(saveT); beforeSave();
     try {
       if (DEMO) { localStorage.setItem(DKEY, JSON.stringify(S)); META.draft_at = new Date().toISOString().slice(0, 19).replace("T", " "); }
-      else if (GHM) { META.draft_at = new Date().toISOString().slice(0, 19).replace("T", " "); try { localStorage.setItem(GKEY, JSON.stringify({ site: S, at: META.draft_at })); } catch (er) { throw new Error("Не хватает места для черновика в браузере. Опубликуйте изменения сейчас"); } }
+      else if (GHM) { META.draft_at = new Date().toISOString().slice(0, 19).replace("T", " "); try { localStorage.setItem(GKEY, JSON.stringify({ site: S, base: BASE, at: META.draft_at })); } catch (er) { throw new Error("Не хватает места для черновика в браузере. Опубликуйте изменения сейчас"); } }
       else META.draft_at = (await api("draft", { site: S })).draft_at;
       dirty = false;
     } catch (e) { fail(e.message); }
@@ -73,7 +84,7 @@
     if (DEMO) { localStorage.setItem(DKEY, JSON.stringify(S)); toast("Пробный режим: на сервере это опубликует сайт"); return; }
     const b = $("#pubBtn"); b.disabled = true; b.textContent = "Публикуем…";
     try {
-      if (GHM) { await GH.publish(S); META.published_at = new Date().toISOString().slice(0, 19).replace("T", " "); try { localStorage.removeItem(GKEY); } catch (e) {} toast("Опубликовано. Сайт обновится примерно через минуту"); }
+      if (GHM) { const cur = await GH.loadSite(); if (BASE && !eq(cur, BASE)) { S = merge3(BASE, S, cur); render(); } await GH.publish(S); BASE = JSON.parse(JSON.stringify(S)); META.published_at = new Date().toISOString().slice(0, 19).replace("T", " "); try { localStorage.removeItem(GKEY); } catch (e) {} toast("Опубликовано. Сайт обновится примерно через минуту"); }
       else { META.published_at = (await api("publish", { site: S })).published_at; toast("Опубликовано. Сайт обновлён"); }
       dirty = false; unpublished = false;
     }
@@ -555,9 +566,13 @@
   async function bootGH() {
     const pub = await GH.loadSite();
     let local = null; try { local = JSON.parse(localStorage.getItem(GKEY) || "null"); } catch (e) {}
-    S = local ? local.site : pub; META = { draft_at: local ? local.at : null, published_at: null };
+    // старый черновик без «базы» нельзя аккуратно слить: спрашиваем
+    if (local && !local.base && !eq(local.site, pub) && !confirm("На этом устройстве есть неопубликованный черновик от " + (local.at || "прошлого раза") + ". Продолжить с ним?\n\nОтмена: открыть то, что сейчас на сайте.")) { local = null; try { localStorage.removeItem(GKEY); } catch (e) {} }
+    S = local ? (local.base ? merge3(local.base, local.site, pub) : local.site) : pub; BASE = JSON.parse(JSON.stringify(pub));
+    if (local && eq(S, pub)) { local = null; try { localStorage.removeItem(GKEY); } catch (e) {} }
+    META = { draft_at: local ? local.at : null, published_at: null };
     unpublished = !!local; LEADS = []; TAB = "courses"; render();
-    if (local) toast("Открыт ваш неопубликованный черновик");
+    if (local) toast("Открыт ваш неопубликованный черновик, свежие изменения с сайта добавлены");
   }
   async function boot2() {
     const j = await api("draft"); S = j.site; META = { draft_at: j.draft_at, published_at: j.published_at };
