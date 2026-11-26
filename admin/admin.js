@@ -102,6 +102,31 @@
   F.bool = (label, o, k, opt = {}) => el("label", { class: "chk" }, el("input", { type: "checkbox", checked: !!o[k], onchange: (e) => { o[k] = e.target.checked; touch(); if (opt.on) opt.on(); } }), el("span", { text: label }));
   F.multi = (label, o, k, opts) => { if (!Array.isArray(o[k])) o[k] = []; return el("div", { class: "f" }, el("span", { text: label }), el("div", { class: "multi" }, opts.map(([v, n]) =>
     el("label", { class: "chk" }, el("input", { type: "checkbox", checked: o[k].includes(v), onchange: (e) => { o[k] = e.target.checked ? [...new Set([...o[k], v])] : o[k].filter((x) => x !== v); touch(); } }), el("span", { text: n }))))); };
+  // фото первого экрана: плитки «Главное», «Фото 2», «Фото 3» с кнопками под каждой и плитка «+ Добавить фото»
+  const pickPhoto = (done) => { const inp = el("input", { type: "file", accept: "image/jpeg,image/png,image/webp", style: "display:none" });
+    inp.addEventListener("change", async () => { const f = inp.files[0]; inp.remove(); if (!f) return;
+      if (DEMO) return toast("Пробный режим: загрузка фото работает на сервере", true);
+      toast("Загружаем фото…");
+      try { if (GHM) { const r = await GH.uploadPhoto(f); IMG[r.src] = r.preview; done(r.src); } else { done((await api("upload", (() => { const fd = new FormData(); fd.append("file", f); return fd; })(), true)).src); } toast("Фото загружено. Нажмите «Опубликовать»"); }
+      catch (er) { fail(er.message); } });
+    document.body.append(inp); inp.click(); };
+  const heroPhotos = () => {
+    if (!Array.isArray(S.hero.more)) S.hero.more = [];
+    const wrap = el("div", { class: "f" });
+    const url = (src) => `url("${IMG[src] || "../" + String(src).replace(/"/g, "") + "-640.webp"}")`;
+    const draw = () => {
+      const more = S.hero.more.filter((m) => m && m.src); S.hero.more = more;
+      const tile = (label, src, onRep, onDel) => el("div", { class: "hp-tile" }, el("div", { class: "hp-tile__pv", style: src ? `background-image:${url(src)}` : "" }), el("b", { text: label }),
+        el("div", { class: "hp-tile__b" }, el("button", { type: "button", class: "btn btn--sm", text: src ? "Заменить" : "Загрузить", onclick: onRep }), onDel ? el("button", { type: "button", class: "btn btn--sm btn--bad", text: "Убрать", onclick: onDel }) : null));
+      wrap.replaceChildren(el("span", { text: "Фото первого экрана" }), el("small", { class: "hint", text: more.length ? "Фото плавно сменяют друг друга каждые 5 секунд. Первое показывается сразу." : "Можно добавить ещё до двух фото: тогда они будут плавно сменять друг друга." }),
+        el("div", { class: "hp-tiles" },
+          tile("Главное", S.hero.photo, () => pickPhoto((src) => { S.hero.photo = src; touch(); draw(); }), null),
+          ...more.map((m, i) => tile("Фото " + (i + 2), m.src, () => pickPhoto((src) => { m.src = src; touch(); draw(); }), () => { if (!confirm("Убрать это фото с первого экрана?")) return; S.hero.more.splice(i, 1); touch(); draw(); toast("Фото убрано. Нажмите «Опубликовать»"); })),
+          more.length < 2 ? el("button", { type: "button", class: "hp-tile hp-tile--add", onclick: () => pickPhoto((src) => { S.hero.more.push({ src, alt: "" }); touch(); draw(); }) }, el("span", { text: "+" }), el("b", { text: "Добавить фото" })) : null),
+        F.text("Что на главном фото (для поиска и незрячих)", S.hero, "alt", { ph: "Например: наращенные ресницы крупным планом" }));
+    };
+    draw(); return wrap;
+  };
   F.img = (label, o, k, altKey) => {
     const pv = el("div", { class: "img__pv" });
     const paint = () => { pv.style.backgroundImage = o[k] ? `url("${IMG[o[k]] || "../" + String(o[k]).replace(/"/g, "") + "-640.webp"}")` : "none"; };
@@ -152,12 +177,16 @@
     if (!opt.fixed) dragSort(box, ".item", (a, b) => { const [x] = arr.splice(a, 1); arr.splice(b, 0, x); openI = -1; draw(); touch(); });
     const draw = () => {
       box.replaceChildren(...arr.map((it, i) => {
-        const ttl = el("span", { class: "ttl", text: opt.title(it) || opt.untitled || "Без названия" });
+        const ttl = el("span", { class: "ttl", text: opt.title(it) || (opt.untitled ? opt.untitled + (arr.length > 1 ? " " + (i + 1) : "") : "Без названия") });
+        // миниатюра в строке: сразу видно, какое фото, без раскрытия
+        const tsrc = opt.thumb ? opt.thumb(it) : (it && typeof it.src === "string" && it.src ? it.src : (it && typeof it.photo === "string" && it.photo ? it.photo : ""));
+        const thumb = tsrc ? el("span", { class: "thumb", style: `background-image:url("${IMG[tsrc] || "../" + String(tsrc).replace(/"/g, "") + "-640.webp"}")` }) : null;
+        const delNow = opt.fixed ? null : el("button", { type: "button", class: "ic ic--del", "aria-label": opt.del || "Удалить", title: opt.del || "Удалить", text: "×", onclick: (e) => { e.preventDefault(); if (confirm((opt.del || "Удалить") + "?")) { arr.splice(i, 1); openI = -1; if (opt.onChange) opt.onChange(); draw(); touch(); } } });
         const meta = opt.meta ? el("span", { class: "meta", text: opt.meta(it) }) : null;
         const d = el("details", { class: "item", open: i === openI, ontoggle: (e) => { if (e.target.open) openI = i; else if (openI === i) openI = -1; } },
-          el("summary", {}, opt.fixed ? null : el("span", { class: "drag", "aria-label": "Перетащить", title: "Перетащить", text: "⠿" }), ttl, meta, opt.fixed ? null : el("span", { class: "ord" },
+          el("summary", {}, opt.fixed ? null : el("span", { class: "drag", "aria-label": "Перетащить", title: "Перетащить", text: "⠿" }), thumb, ttl, meta, opt.fixed ? null : el("span", { class: "ord" },
             el("button", { type: "button", class: "ic", "aria-label": "Выше", text: "↑", disabled: i === 0, onclick: (e) => { e.preventDefault(); [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; openI = -1; draw(); touch(); } }),
-            el("button", { type: "button", class: "ic", "aria-label": "Ниже", text: "↓", disabled: i === arr.length - 1, onclick: (e) => { e.preventDefault(); [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; openI = -1; draw(); touch(); } }))),
+            el("button", { type: "button", class: "ic", "aria-label": "Ниже", text: "↓", disabled: i === arr.length - 1, onclick: (e) => { e.preventDefault(); [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]]; openI = -1; draw(); touch(); } }), delNow)),
           el("div", { class: "item__in" }, opt.fields(it, () => { ttl.textContent = opt.title(it) || opt.untitled || "Без названия"; if (meta) meta.textContent = opt.meta(it); }),
             opt.fixed ? null : el("div", { style: "display:flex;gap:8px;flex-wrap:wrap" }, el("button", { type: "button", class: "btn btn--sm", text: "Копировать как шаблон", onclick: () => { const c = JSON.parse(JSON.stringify(it)); ["name", "t", "title", "q", "code"].forEach((k) => { if (c[k]) c[k] += k === "code" ? "2" : " (копия)"; }); if ("slug" in c) c.slug = ""; arr.splice(i + 1, 0, c); openI = i + 1; draw(); touch(); } }),
             el("button", { type: "button", class: "btn btn--sm btn--bad", text: opt.del || "Удалить", onclick: () => { if (confirm("Удалить «" + (opt.title(it) || "элемент") + "»?")) { arr.splice(i, 1); openI = -1; if (opt.onChange) opt.onChange(); draw(); touch(); } } }))));
@@ -232,8 +261,7 @@
         ...off.map((b) => el("div", { class: "brow", style: "opacity:.6" }, el("span", { text: BLOCKS[b] + " (скрыт)" }), el("button", { type: "button", class: "btn btn--sm", text: "Показать", onclick: () => { on.push(b); drawB(); touch(); } }))));
     }; drawB();
     return [el("h1", { text: "Главная страница" }), el("p", { class: "sub", text: "Тексты и фото главной. Порядок блоков меняется стрелками." }),
-      box("Первый экран", "заголовок и фото", [F.area("Заголовок", S.hero, "title", { max: 160 }), F.area("Короткий текст под заголовком", S.hero, "short", { max: 240 }), F.img("Главное фото", S.hero, "photo", "alt"),
-        el("div", { class: "f" }, el("span", { text: "Ещё до двух фото: на первом экране плавно сменяют главное каждые 5 секунд" }), F.list(Array.isArray(S.hero.more) ? S.hero.more : (S.hero.more = []), { title: (it) => it.alt, untitled: "Фото", fields: (it) => [F.img("Фото", it, "src", "alt")], blank: () => ({ src: "", alt: "" }), add: "Добавить фото", del: "Убрать фото" }))], true),
+      box("Первый экран", "заголовок и фото", [F.area("Заголовок", S.hero, "title", { max: 160 }), F.area("Короткий текст под заголовком", S.hero, "short", { max: 240 }), heroPhotos()], true),
       el("p", { class: "sub" }, "Порядок и показ блоков: вкладка ", el("a", { href: "#", onclick: (e) => { e.preventDefault(); TAB = "sections"; render(); } }, "«Разделы сайта»"), "."),
       box("Блок записи", null, [F.area("Заголовок", S.enroll, "title", { max: 160 }), F.area("Текст", S.enroll, "text", { max: 400 }), F.img("Фото", S.enroll, "photo", "alt")]),
       box("Фото-сцена «Как мы учим»", null, [F.text("Надпись над заголовком", S.zoom, "kicker"), F.text("Заголовок", S.zoom, "title"), F.img("Главное фото", S.zoom, "main", "alt"),
