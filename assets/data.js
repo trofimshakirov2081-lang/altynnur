@@ -110,7 +110,16 @@ window.SITE = {
     "short": "Учебный центр бьюти-профессий в Туймазах. Практика на моделях с первого дня, рядом с преподавателем.",
     "photo": "ph/r-lash-brown",
     "alt": "Наращенные ресницы крупным планом",
-    "more": [],
+    "more": [
+      {
+        "src": "ph/up-mwxoklvt",
+        "alt": ""
+      },
+      {
+        "src": "ph/up-mwxoluca",
+        "alt": ""
+      }
+    ],
     "style": "poster"
   },
   "zoom": {
@@ -270,7 +279,8 @@ window.SITE = {
       "group": "",
       "models": "Модели предоставляет студия",
       "materials": "Материал на время обучения от студии, потом скидка 10% на материалы",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "lashes-pro",
@@ -310,7 +320,8 @@ window.SITE = {
       "group": "2-3 человека",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "lami",
@@ -350,7 +361,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "lami-pro",
@@ -390,7 +402,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "brows",
@@ -427,7 +440,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "brows-pro",
@@ -458,7 +472,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "depil",
@@ -486,7 +501,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "cosm-face",
@@ -521,7 +537,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "cosm-body",
@@ -547,7 +564,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "apparat",
@@ -573,7 +591,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "manicure-5",
@@ -610,7 +629,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "Методическое пособие, бессрочное сопровождение после курса",
-      "certificate": "3 настенных сертификата, по желанию свидетельство о профобразовании"
+      "certificate": "3 настенных сертификата, по желанию свидетельство о профобразовании",
+      "faq": []
     },
     {
       "slug": "manicure-3",
@@ -642,7 +662,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Настенный сертификат"
+      "certificate": "Настенный сертификат",
+      "faq": []
     },
     {
       "slug": "nails-up",
@@ -673,7 +694,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "pedicure",
@@ -714,7 +736,8 @@ window.SITE = {
       "group": "",
       "models": "3 модели",
       "materials": "Все материалы и инструменты даёт студия",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "nail-ext",
@@ -740,7 +763,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "nail-design",
@@ -778,7 +802,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "hair",
@@ -816,7 +841,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     },
     {
       "slug": "curls",
@@ -852,7 +878,8 @@ window.SITE = {
       "group": "",
       "models": "",
       "materials": "",
-      "certificate": "Сертификат"
+      "certificate": "Сертификат",
+      "faq": []
     }
   ],
   "featured": [
@@ -1337,5 +1364,6 @@ window.SITE = {
     "title": "Объём крупным планом",
     "text": "Так выглядит работа вблизи: каждая ресница видна."
   },
-  "moreAfter": "6"
+  "moreAfter": "6",
+  "mode": "static"
 };
