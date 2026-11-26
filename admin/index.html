@@ -120,14 +120,13 @@ main{padding:20px 0 80px}
 .btn--icon{width:42px;padding:0;font-size:1.25rem;justify-content:center}
 .top__in{flex-wrap:wrap;row-gap:6px}.top__in .state{order:9;flex:1 0 100%;font-size:.8rem;margin:0}.top__in .btn--icon{margin-left:auto}
 @media(max-width:420px){.top__in{gap:6px;padding:10px 12px}.top__in .btn{padding:0 11px;font-size:.9rem;min-height:38px}.top__in .btn--icon{width:38px;padding:0}.top__name{font-size:1rem}}
+.bstate{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:99px;background:#f1e3e0;color:#8a3a2e;margin-left:8px;white-space:nowrap}
+.bstate--on{background:#e3efe4;color:#2f6b3a}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="config.js" onerror="void 0"></script>
-<script src="../assets/pages-lib.js"></script>
-<script src="gh.js"></script>
-<script src="admin.js"></script>
+<script>(function () { var v = Date.now(); ["config.js", "../assets/pages-lib.js", "gh.js", "admin.js"].forEach(function (f) { document.write('<script src="' + f + '?v=' + v + '"' + (f === "config.js" ? ' onerror="void 0"' : "") + '><\/script>'); }); })();</script>
 </body>
 </html>
